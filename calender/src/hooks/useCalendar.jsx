@@ -4,6 +4,17 @@ import dayjs from "dayjs";
 const useCalendar = (year, month) => {
   const [events, setEvents] = useState([]);
 
+  // Predefined light colors
+  const lightColors = [
+    "bg-green-300",
+    "bg-red-300",
+    "bg-orange-300",
+    "bg-blue-300",
+    "bg-yellow-300",
+    "bg-purple-300",
+    "bg-pink-300",
+  ];
+
   // Generate a 35-grid calendar
   const generateCalendar = () => {
     const firstDayOfMonth = dayjs(`${year}-${month}-01`);
@@ -64,7 +75,13 @@ const useCalendar = (year, month) => {
       return false;
     }
 
-    setEvents((prevEvents) => [...prevEvents, newEvent]);
+    // Assign a random light color from the predefined list
+    const randomColor =
+      lightColors[Math.floor(Math.random() * lightColors.length)];
+    setEvents((prevEvents) => [
+      ...prevEvents,
+      { ...newEvent, color: randomColor },
+    ]);
     return true;
   };
 

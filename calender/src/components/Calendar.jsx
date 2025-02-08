@@ -40,14 +40,17 @@ const Calendar = ({ year, month }) => {
               }`}
               onClick={() => handleClick(date)}
             >
+              {/* Display the day number */}
               <div className={`${!isCurrentMonth ? "text-gray-500" : ""}`}>
                 {day}
               </div>
+
+              {/* Display events as buttons */}
               <div className="flex flex-col gap-1">
                 {dayEvents.slice(0, 2).map((event, idx) => (
-                  <div key={idx} className="relative inline-block">
+                  <div key={idx} className="relative inline-block w-full">
                     <button
-                      className={`text-xs rounded p-1 ${event.color}`}
+                      className={`w-full text-xs rounded px-2 py-1 ${event.color}`}
                       style={{
                         textDecoration:
                           event.endTime &&
@@ -56,7 +59,8 @@ const Calendar = ({ year, month }) => {
                             : "none",
                       }}
                     >
-                      {event.title}
+                      {event.title.slice(0, 4)}{" "}
+                      {/* Show only the first four letters */}
                     </button>
                     <span
                       className="absolute top-0 right-0 text-red-500 cursor-pointer"
