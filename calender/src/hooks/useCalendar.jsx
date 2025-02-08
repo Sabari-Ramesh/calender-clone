@@ -76,21 +76,55 @@ const useCalendar = (year, month) => {
     }
 
     // Assign a random light color from the predefined list
-    const randomColor =
-      lightColors[Math.floor(Math.random() * lightColors.length)];
-    setEvents((prevEvents) => [
-      ...prevEvents,
-      { ...newEvent, color: randomColor },
-    ]);
+    const randomColor = lightColors[Math.floor(Math.random() * lightColors.length)];
+    setEvents((prevEvents) => [...prevEvents, { ...newEvent, color: randomColor }]);
+    return true;
+  };
+
+  // Update an existing event
+  const updateEvent = (updatedEvent) => {
+    const { date, title, startTime, endTime, description } = updatedEvent;
+
+    // Validate event title length
+    if (title.length > 20) {
+      alert("Event title must not exceed 20 characters.");
+      return false;
+    }
+
+    // Validate start time and end time
+    if (startTime >= endTime) {
+      alert("Start time must be earlier than end time.");
+      return false;
+    }
+
+    // Validate overlapping events
+    const existingEvents = events.filter(
+      (event) => event.date === date && event.title !== title
+    );
+    const isOverlapping = existingEvents.some(
+      (event) =>
+        (startTime >= event.startTime && startTime < event.endTime) ||
+        (endTime > event.startTime && endTime <= event.endTime) ||
+        (startTime <= event.startTime && endTime >= event.endTime)
+    );
+
+    if (isOverlapping) {
+      alert("Error: Events cannot overlap on the same day.");
+      return false;
+    }
+
+    setEvents((prevEvents) =>
+      prevEvents.map((event) =>
+        event.title === title && event.date === date ? { ...event, ...updatedEvent } : event
+      )
+    );
     return true;
   };
 
   // Remove event by its unique identifier
   const removeEvent = (date, title) => {
     setEvents((prevEvents) =>
-      prevEvents.filter(
-        (event) => !(event.date === date && event.title === title)
-      )
+      prevEvents.filter((event) => !(event.date === date && event.title === title))
     );
   };
 
@@ -99,7 +133,7 @@ const useCalendar = (year, month) => {
     return events.filter((event) => event.date === date);
   };
 
-  return { generateCalendar, addEvent, removeEvent, getEventsForDate };
+  return { generateCalendar, addEvent, updateEvent, removeEvent, getEventsForDate };
 };
 
 export default useCalendar;

@@ -3,22 +3,33 @@ import dayjs from "dayjs";
 import useCalendar from "../hooks/useCalendar";
 import EventModal from "./EventModal";
 import EventListCard from "./EventListCard";
+import EventDetailsModal from "./EventDetailsModal";
 
 const Calendar = ({ year, month }) => {
-  const { generateCalendar, addEvent, removeEvent, getEventsForDate } =
-    useCalendar(year, month);
+  const {
+    generateCalendar,
+    addEvent,
+    updateEvent,
+    removeEvent,
+    getEventsForDate,
+  } = useCalendar(year, month);
   const calendarGrid = generateCalendar();
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [showEventListCard, setShowEventListCard] = useState(false); // State for EventListCard
+  const [showEventListCard, setShowEventListCard] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null); // State for selected event
 
   const handleClick = (date) => {
     setSelectedDate(date);
-    setShowModal(true); // Open the EventModal
+    setShowModal(true);
   };
 
   const handleRemoveEvent = (date, title) => {
     removeEvent(date, title);
+  };
+
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
   };
 
   return (
@@ -31,6 +42,7 @@ const Calendar = ({ year, month }) => {
           </div>
         ))}
       </div>
+
       {/* Responsive Calendar Grid */}
       <div className="grid grid-cols-7 gap-0 mt-0 text-xs sm:text-sm">
         {calendarGrid.flat().map(({ date, day, isCurrentMonth }, index) => {
@@ -40,7 +52,7 @@ const Calendar = ({ year, month }) => {
             <div
               key={index}
               className="border p-1 flex flex-col justify-between items-center h-24 w-full cursor-pointer"
-              onClick={() => handleClick(date)} // Open EventModal on day click
+              onClick={() => handleClick(date)}
             >
               {/* Display the day number */}
               <div
@@ -63,6 +75,10 @@ const Calendar = ({ year, month }) => {
                           dayjs(event.endTime).isBefore(dayjs())
                             ? "line-through"
                             : "none",
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent opening the modal
+                        handleEventClick(event); // Open EventDetailsModal
                       }}
                     >
                       {/* Show 3 letters on mobile, full title on desktop */}
@@ -88,7 +104,7 @@ const Calendar = ({ year, month }) => {
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent opening the modal
                       setSelectedDate(date);
-                      setShowEventListCard(true); // Open the EventListCard
+                      setShowEventListCard(true); // Open EventListCard
                     }}
                   >
                     +{dayEvents.length - 2} more...
@@ -99,6 +115,7 @@ const Calendar = ({ year, month }) => {
           );
         })}
       </div>
+
       {/* Event Modal */}
       {showModal && (
         <EventModal
@@ -110,12 +127,25 @@ const Calendar = ({ year, month }) => {
           }}
         />
       )}
+
       {/* Event List Card */}
       {showEventListCard && (
         <EventListCard
           date={selectedDate}
           events={getEventsForDate(selectedDate)}
           onClose={() => setShowEventListCard(false)} // Close the EventListCard
+        />
+      )}
+
+      {/* Event Details Modal */}
+      {selectedEvent && (
+        <EventDetailsModal
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)} // Close the modal
+          onUpdate={(updatedEvent) => {
+            const success = updateEvent(updatedEvent);
+            if (success) setSelectedEvent(null); // Close the modal after update
+          }}
         />
       )}
     </div>
