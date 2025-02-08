@@ -20,6 +20,9 @@ const Calendar = ({ year, month }) => {
   const [showEventListCard, setShowEventListCard] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
+  // Get today's date
+  const today = dayjs().format("YYYY-MM-DD");
+
   const handleClick = (date) => {
     setSelectedDate(date);
     setShowModal(true);
@@ -28,7 +31,7 @@ const Calendar = ({ year, month }) => {
   const handleRemoveEvent = (id) => {
     removeEvent(id);
   };
-  
+
   const handleEventClick = (event) => {
     setSelectedEvent(event);
   };
@@ -48,11 +51,14 @@ const Calendar = ({ year, month }) => {
       <div className="grid grid-cols-7 gap-0 mt-0 text-xs sm:text-sm">
         {calendarGrid.flat().map(({ date, day, isCurrentMonth }, index) => {
           const dayEvents = getEventsForDate(date);
+          const isToday = date === today; // Check if the date is today
 
           return (
             <div
               key={index}
-              className="border p-1 flex flex-col justify-between items-center h-24 w-full cursor-pointer"
+              className={`border p-1 flex flex-col justify-between items-center h-24 w-full cursor-pointer ${
+                isToday ? "bg-yellow-200" : "" // Highlight today's date with a custom color
+              }`}
               onClick={() => handleClick(date)}
             >
               {/* Display the day number */}
@@ -72,8 +78,10 @@ const Calendar = ({ year, month }) => {
                       className={`w-full text-xs rounded px-1 py-0.5 truncate ${event.color}`}
                       style={{
                         textDecoration:
-                          event.endTime &&
-                          dayjs(event.endTime).isBefore(dayjs())
+                          dayjs(date).isBefore(dayjs(), "day") || // Check if the event is from a past day
+                          (date === today &&
+                            event.endTime &&
+                            dayjs(event.endTime).isBefore(dayjs())) // Check if the event is today and its time has passed
                             ? "line-through"
                             : "none",
                       }}
@@ -92,7 +100,7 @@ const Calendar = ({ year, month }) => {
                       className="absolute top-0 right-0 text-red-500 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleRemoveEvent(date, event.title);
+                        handleRemoveEvent(event.id); // Pass the event ID
                       }}
                     >
                       &times;
@@ -125,7 +133,7 @@ const Calendar = ({ year, month }) => {
           onSubmit={(eventData) => {
             const result = addEvent(eventData);
             if (result.success) setShowModal(false);
-            return result; // Ensure the result is returned
+            return result;
           }}
         />
       )}
@@ -147,7 +155,7 @@ const Calendar = ({ year, month }) => {
           onUpdate={(updatedEvent) => {
             const result = updateEvent(updatedEvent);
             if (result.success) setSelectedEvent(null);
-            return result; // Ensure the result is returned
+            return result;
           }}
         />
       )}
