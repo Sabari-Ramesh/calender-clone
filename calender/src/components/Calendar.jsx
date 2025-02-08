@@ -1,10 +1,13 @@
-import  { useState } from "react";
+import React, { useState } from "react";
 import dayjs from "dayjs";
 import useCalendar from "../hooks/useCalendar";
 import EventModal from "./EventModal";
 
 const Calendar = ({ year, month }) => {
-  const { generateCalendar, addEvent, getEventsForDate } = useCalendar(year, month);
+  const { generateCalendar, addEvent, getEventsForDate } = useCalendar(
+    year,
+    month
+  );
   const calendarGrid = generateCalendar();
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -41,45 +44,47 @@ const Calendar = ({ year, month }) => {
         ))}
       </div>
       <div className="grid grid-cols-7 gap-2 mt-2">
-        {calendarGrid.flat().map((day, index) => {
-          const date = day ? `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}` : null;
-          const dayEvents = date ? getEventsForDate(date) : [];
+        {calendarGrid.flat().map(({ date, day, isCurrentMonth }, index) => {
+          const dayEvents = getEventsForDate(date);
 
           return (
             <div
               key={index}
               className={`border p-2 cursor-pointer hover:bg-gray-100 ${
-                !day ? "bg-gray-200" : ""
+                !isCurrentMonth ? "bg-gray-200" : ""
               }`}
               onClick={() => handleAddEvent(date)}
             >
-              {day && (
-                <>
-                  <div>{day}</div>
-                  <div>
-                    {dayEvents.slice(0, 2).map((event, idx) => (
-                      <div
-                        key={idx}
-                        className={`text-xs rounded p-1 mb-1 ${event.color}`}
-                        style={{ textDecoration: event.endTime && dayjs(event.endTime).isBefore(dayjs()) ? "line-through" : "none" }}
-                      >
-                        {event.title}
-                      </div>
-                    ))}
-                    {dayEvents.length > 2 && (
-                      <div
-                        className="text-xs text-blue-500 cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openModal(date);
-                        }}
-                      >
-                        +{dayEvents.length - 2} more...
-                      </div>
-                    )}
+              <div className={`${!isCurrentMonth ? "text-gray-500" : ""}`}>
+                {day}
+              </div>
+              <div>
+                {dayEvents.slice(0, 2).map((event, idx) => (
+                  <div
+                    key={idx}
+                    className={`text-xs rounded p-1 mb-1 ${event.color}`}
+                    style={{
+                      textDecoration:
+                        event.endTime && dayjs(event.endTime).isBefore(dayjs())
+                          ? "line-through"
+                          : "none",
+                    }}
+                  >
+                    {event.title}
                   </div>
-                </>
-              )}
+                ))}
+                {dayEvents.length > 2 && (
+                  <div
+                    className="text-xs text-blue-500 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openModal(date);
+                    }}
+                  >
+                    +{dayEvents.length - 2} more...
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
