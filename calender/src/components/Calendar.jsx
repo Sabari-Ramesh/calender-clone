@@ -59,8 +59,11 @@ const Calendar = ({ year, month }) => {
                             : "none",
                       }}
                     >
-                      {event.title.slice(0, 4)}{" "}
-                      {/* Show only the first four letters */}
+                      {/* Show 3 letters on mobile, full title on desktop */}
+                      <span className="sm:hidden">
+                        {event.title.slice(0, 3)}
+                      </span>
+                      <span className="hidden sm:inline">{event.title}</span>
                     </button>
                     <span
                       className="absolute top-0 right-0 text-red-500 cursor-pointer"
@@ -74,8 +77,8 @@ const Calendar = ({ year, month }) => {
                   </div>
                 ))}
                 {dayEvents.length > 2 && (
-                  <div
-                    className="text-xs text-blue-500 cursor-pointer"
+                  <button
+                    className={`text-xs text-blue-500 cursor-pointer w-full rounded px-2 py-1 ${dayEvents[0].color}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedDate(date);
@@ -83,7 +86,7 @@ const Calendar = ({ year, month }) => {
                     }}
                   >
                     +{dayEvents.length - 2} more...
-                  </div>
+                  </button>
                 )}
               </div>
             </div>
