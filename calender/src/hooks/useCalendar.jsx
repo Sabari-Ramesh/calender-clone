@@ -34,9 +34,26 @@ const useCalendar = (year, month) => {
     return calendarGrid;
   };
 
-  // Add event
+  // Add event with validation
   const addEvent = (newEvent) => {
+    const { date, startTime, endTime } = newEvent;
+
+    // Validate overlapping events
+    const existingEvents = events.filter((event) => event.date === date);
+    const isOverlapping = existingEvents.some(
+      (event) =>
+        (startTime >= event.startTime && startTime < event.endTime) ||
+        (endTime > event.startTime && endTime <= event.endTime) ||
+        (startTime <= event.startTime && endTime >= event.endTime)
+    );
+
+    if (isOverlapping) {
+      alert("Error: Events cannot overlap on the same day.");
+      return false;
+    }
+
     setEvents((prevEvents) => [...prevEvents, newEvent]);
+    return true;
   };
 
   // Get events for a specific date

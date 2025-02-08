@@ -12,26 +12,7 @@ const Calendar = ({ year, month }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const handleAddEvent = (date) => {
-    const title = prompt("Enter event title:");
-    if (title) {
-      const startTime = prompt("Enter start time (HH:mm):");
-      const endTime = prompt("Enter end time (HH:mm):");
-      const color = getRandomLightColor();
-      addEvent({ title, date, startTime, endTime, color });
-    }
-  };
-
-  const getRandomLightColor = () => {
-    const letters = "BCDEF".split("");
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * letters.length)];
-    }
-    return color;
-  };
-
-  const openModal = (date) => {
+  const handleDoubleClick = (date) => {
     setSelectedDate(date);
     setShowModal(true);
   };
@@ -53,7 +34,7 @@ const Calendar = ({ year, month }) => {
               className={`border p-2 cursor-pointer hover:bg-gray-100 ${
                 !isCurrentMonth ? "bg-gray-200" : ""
               }`}
-              onClick={() => handleAddEvent(date)}
+              onDoubleClick={() => handleDoubleClick(date)}
             >
               <div className={`${!isCurrentMonth ? "text-gray-500" : ""}`}>
                 {day}
@@ -78,7 +59,8 @@ const Calendar = ({ year, month }) => {
                     className="text-xs text-blue-500 cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation();
-                      openModal(date);
+                      setSelectedDate(date);
+                      setShowModal(true);
                     }}
                   >
                     +{dayEvents.length - 2} more...
@@ -92,8 +74,11 @@ const Calendar = ({ year, month }) => {
       {showModal && (
         <EventModal
           date={selectedDate}
-          events={getEventsForDate(selectedDate)}
           onClose={() => setShowModal(false)}
+          onSubmit={(eventData) => {
+            const success = addEvent(eventData);
+            if (success) setShowModal(false);
+          }}
         />
       )}
     </div>
