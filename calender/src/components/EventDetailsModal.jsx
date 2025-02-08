@@ -6,26 +6,25 @@ const EventDetailsModal = ({ event, onClose, onUpdate }) => {
   const [startTime, setStartTime] = useState(event.startTime);
   const [endTime, setEndTime] = useState(event.endTime);
   const [description, setDescription] = useState(event.description);
+  const [errors, setErrors] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const success = onUpdate({
-      ...event,
-      title,
-      startTime,
-      endTime,
-      description,
-    });
-    if (success) setIsEditing(false);
+
+    const updatedEvent = { title, startTime, endTime, description, date: event.date };
+    const result = onUpdate(updatedEvent);
+
+    if (!result.success) {
+      setErrors(result.errors);
+    } else {
+      onClose();
+    }
   };
 
   return (
     <div className="fixed inset-0 flex justify-center items-center z-50">
-      {/* Modal Content */}
       <div className="bg-white p-4 rounded-lg w-full sm:max-w-md shadow-lg z-50">
-        <h2 className="text-xl font-bold mb-2">
-          {isEditing ? "Edit Event" : "Event Details"}
-        </h2>
+        <h2 className="text-xl font-bold mb-2">{isEditing ? "Edit Event" : "Event Details"}</h2>
         {isEditing ? (
           <form onSubmit={handleSubmit}>
             {/* Event Title */}
@@ -38,6 +37,7 @@ const EventDetailsModal = ({ event, onClose, onUpdate }) => {
                 className="w-full p-2 border rounded"
                 maxLength={20}
               />
+              {errors.title && <p className="text-red-500 text-xs">{errors.title}</p>}
             </div>
 
             {/* Start Time */}
@@ -49,6 +49,7 @@ const EventDetailsModal = ({ event, onClose, onUpdate }) => {
                 onChange={(e) => setStartTime(e.target.value)}
                 className="w-full p-2 border rounded"
               />
+              {errors.time && <p className="text-red-500 text-xs">{errors.time}</p>}
             </div>
 
             {/* End Time */}
@@ -72,6 +73,9 @@ const EventDetailsModal = ({ event, onClose, onUpdate }) => {
               />
             </div>
 
+            {/* Overlap Error */}
+            {errors.overlap && <p className="text-red-500 text-xs mb-2">{errors.overlap}</p>}
+
             {/* Buttons */}
             <div className="flex justify-end space-x-2">
               <button
@@ -81,10 +85,7 @@ const EventDetailsModal = ({ event, onClose, onUpdate }) => {
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-              >
+              <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
                 Save
               </button>
             </div>
@@ -95,9 +96,7 @@ const EventDetailsModal = ({ event, onClose, onUpdate }) => {
             <p className="text-sm font-medium">
               Time: {event.startTime} - {event.endTime}
             </p>
-            <p className="text-sm font-medium">
-              Description: {event.description || "N/A"}
-            </p>
+            <p className="text-sm font-medium">Description: {event.description || "N/A"}</p>
             <div className="flex justify-end space-x-2 mt-4">
               <button
                 className="px-4 py-2 bg-yellow-500 text-white rounded"

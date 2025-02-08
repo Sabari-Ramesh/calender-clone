@@ -13,11 +13,12 @@ const Calendar = ({ year, month }) => {
     removeEvent,
     getEventsForDate,
   } = useCalendar(year, month);
+
   const calendarGrid = generateCalendar();
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showEventListCard, setShowEventListCard] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null); // State for selected event
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const handleClick = (date) => {
     setSelectedDate(date);
@@ -77,8 +78,8 @@ const Calendar = ({ year, month }) => {
                             : "none",
                       }}
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent opening the modal
-                        handleEventClick(event); // Open EventDetailsModal
+                        e.stopPropagation();
+                        handleEventClick(event);
                       }}
                     >
                       {/* Show 3 letters on mobile, full title on desktop */}
@@ -102,9 +103,9 @@ const Calendar = ({ year, month }) => {
                   <button
                     className={`text-xs text-blue-500 cursor-pointer w-full rounded px-1 py-0.5 truncate ${dayEvents[0].color}`}
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent opening the modal
+                      e.stopPropagation();
                       setSelectedDate(date);
-                      setShowEventListCard(true); // Open EventListCard
+                      setShowEventListCard(true);
                     }}
                   >
                     +{dayEvents.length - 2} more...
@@ -122,8 +123,9 @@ const Calendar = ({ year, month }) => {
           date={selectedDate}
           onClose={() => setShowModal(false)}
           onSubmit={(eventData) => {
-            const success = addEvent(eventData);
-            if (success) setShowModal(false);
+            const result = addEvent(eventData);
+            if (result.success) setShowModal(false);
+            return result; // Ensure the result is returned
           }}
         />
       )}
@@ -133,7 +135,7 @@ const Calendar = ({ year, month }) => {
         <EventListCard
           date={selectedDate}
           events={getEventsForDate(selectedDate)}
-          onClose={() => setShowEventListCard(false)} // Close the EventListCard
+          onClose={() => setShowEventListCard(false)}
         />
       )}
 
@@ -141,10 +143,11 @@ const Calendar = ({ year, month }) => {
       {selectedEvent && (
         <EventDetailsModal
           event={selectedEvent}
-          onClose={() => setSelectedEvent(null)} // Close the modal
+          onClose={() => setSelectedEvent(null)}
           onUpdate={(updatedEvent) => {
-            const success = updateEvent(updatedEvent);
-            if (success) setSelectedEvent(null); // Close the modal after update
+            const result = updateEvent(updatedEvent);
+            if (result.success) setSelectedEvent(null);
+            return result; // Ensure the result is returned
           }}
         />
       )}

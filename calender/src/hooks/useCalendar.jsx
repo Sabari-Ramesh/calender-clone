@@ -1,8 +1,9 @@
 import { useState } from "react";
 import dayjs from "dayjs";
+import data from "../data.json"; // Import static events
 
 const useCalendar = (year, month) => {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState(data); // Static events loaded from data.json
 
   // Predefined light colors
   const lightColors = [
@@ -48,17 +49,20 @@ const useCalendar = (year, month) => {
   // Add event with validation
   const addEvent = (newEvent) => {
     const { date, startTime, endTime, title } = newEvent;
+    const errors = {};
 
     // Validate event title length
-    if (title.length > 20) {
-      alert("Event title must not exceed 20 characters.");
-      return false;
+    if (!title) {
+      errors.title = "Event title is required.";
+    } else if (title.length > 20) {
+      errors.title = "Event title must not exceed 20 characters.";
     }
 
     // Validate start time and end time
-    if (startTime >= endTime) {
-      alert("Start time must be earlier than end time.");
-      return false;
+    if (!startTime || !endTime) {
+      errors.time = "Start time and end time are required.";
+    } else if (startTime >= endTime) {
+      errors.time = "Start time must be earlier than end time.";
     }
 
     // Validate overlapping events
@@ -71,35 +75,46 @@ const useCalendar = (year, month) => {
     );
 
     if (isOverlapping) {
-      alert("Error: Events cannot overlap on the same day.");
-      return false;
+      errors.overlap = "Error: Events cannot overlap on the same day.";
     }
 
-    // Assign a random light color from the predefined list
-    const randomColor = lightColors[Math.floor(Math.random() * lightColors.length)];
-    setEvents((prevEvents) => [...prevEvents, { ...newEvent, color: randomColor }]);
-    return true;
+    if (Object.keys(errors).length > 0) {
+      return { success: false, errors };
+    }
+
+    // Assign a random light color
+    const randomColor =
+      lightColors[Math.floor(Math.random() * lightColors.length)];
+    setEvents((prevEvents) => [
+      ...prevEvents,
+      { ...newEvent, color: randomColor },
+    ]);
+    return { success: true };
   };
 
   // Update an existing event
   const updateEvent = (updatedEvent) => {
-    const { date, title, startTime, endTime, description } = updatedEvent;
+    const { date, title, startTime, endTime } = updatedEvent;
+    const errors = {};
 
     // Validate event title length
-    if (title.length > 20) {
-      alert("Event title must not exceed 20 characters.");
-      return false;
+    if (!title) {
+      errors.title = "Event title is required.";
+    } else if (title.length > 20) {
+      errors.title = "Event title must not exceed 20 characters.";
     }
 
     // Validate start time and end time
-    if (startTime >= endTime) {
-      alert("Start time must be earlier than end time.");
-      return false;
+    if (!startTime || !endTime) {
+      errors.time = "Start time and end time are required.";
+    } else if (startTime >= endTime) {
+      errors.time = "Start time must be earlier than end time.";
     }
 
     // Validate overlapping events
     const existingEvents = events.filter(
-      (event) => event.date === date && event.title !== title
+      (event) =>
+        event.date === date && !(event.title === title && event.date === date)
     );
     const isOverlapping = existingEvents.some(
       (event) =>
@@ -109,22 +124,31 @@ const useCalendar = (year, month) => {
     );
 
     if (isOverlapping) {
-      alert("Error: Events cannot overlap on the same day.");
-      return false;
+      errors.overlap = "Error: Events cannot overlap on the same day.";
     }
 
+    if (Object.keys(errors).length > 0) {
+      return { success: false, errors };
+    }
+
+    // Update the event in the state
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
-        event.title === title && event.date === date ? { ...event, ...updatedEvent } : event
+        event.title === title && event.date === date
+          ? { ...event, ...updatedEvent }
+          : event
       )
     );
-    return true;
+
+    return { success: true };
   };
 
   // Remove event by its unique identifier
   const removeEvent = (date, title) => {
     setEvents((prevEvents) =>
-      prevEvents.filter((event) => !(event.date === date && event.title === title))
+      prevEvents.filter(
+        (event) => !(event.date === date && event.title === title)
+      )
     );
   };
 
@@ -133,7 +157,13 @@ const useCalendar = (year, month) => {
     return events.filter((event) => event.date === date);
   };
 
-  return { generateCalendar, addEvent, updateEvent, removeEvent, getEventsForDate };
+  return {
+    generateCalendar,
+    addEvent,
+    updateEvent,
+    removeEvent,
+    getEventsForDate,
+  };
 };
 
 export default useCalendar;

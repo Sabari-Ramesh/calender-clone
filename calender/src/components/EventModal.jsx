@@ -7,53 +7,18 @@ const EventModal = ({ date, onClose, onSubmit }) => {
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
 
-  // Validate form inputs
-  const validateForm = () => {
-    const newErrors = {};
-
-    // Validate event title length
-    if (!title) {
-      newErrors.title = "Event title is required.";
-    } else if (title.length > 20) {
-      newErrors.title = "Event title must not exceed 20 characters.";
-    }
-
-    // Validate start time and end time
-    if (!startTime || !endTime) {
-      newErrors.time = "Start time and end time are required.";
-    } else if (startTime >= endTime) {
-      newErrors.time = "Start time must be earlier than end time.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (validateForm()) {
-      const color = getRandomLightColor();
-      onSubmit({ title, date, startTime, endTime, description, color });
+    const result = onSubmit({ title, date, startTime, endTime, description });
+    if (!result.success) {
+      setErrors(result.errors);
+    } else {
+      onClose();
     }
-  };
-
-  // Generate a random light color
-  const getRandomLightColor = () => {
-    const colors = [
-      "bg-green-300",
-      "bg-red-300",
-      "bg-orange-300",
-      "bg-blue-300",
-      "bg-yellow-300",
-    ];
-    return colors[Math.floor(Math.random() * colors.length)];
   };
 
   return (
     <div className="fixed inset-0 flex justify-center items-center z-50">
-      {/* Modal Content */}
       <div className="bg-white p-4 rounded-lg w-full sm:max-w-md shadow-lg z-50">
         <h2 className="text-xl font-bold mb-2">Add Event for {date}</h2>
         <form onSubmit={handleSubmit}>
@@ -81,6 +46,9 @@ const EventModal = ({ date, onClose, onSubmit }) => {
               onChange={(e) => setStartTime(e.target.value)}
               className="w-full p-2 border rounded"
             />
+            {errors.time && (
+              <p className="text-red-500 text-xs">{errors.time}</p>
+            )}
           </div>
 
           {/* End Time */}
@@ -92,9 +60,6 @@ const EventModal = ({ date, onClose, onSubmit }) => {
               onChange={(e) => setEndTime(e.target.value)}
               className="w-full p-2 border rounded"
             />
-            {errors.time && (
-              <p className="text-red-500 text-xs">{errors.time}</p>
-            )}
           </div>
 
           {/* Description */}
@@ -106,6 +71,11 @@ const EventModal = ({ date, onClose, onSubmit }) => {
               className="w-full p-2 border rounded"
             />
           </div>
+
+          {/* Overlap Error */}
+          {errors.overlap && (
+            <p className="text-red-500 text-xs mb-2">{errors.overlap}</p>
+          )}
 
           {/* Buttons */}
           <div className="flex justify-end space-x-2">
