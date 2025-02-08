@@ -30,7 +30,7 @@ const EventModal = ({ date, onClose, onSubmit }) => {
   return (
     <div className="fixed inset-0 flex justify-center items-center z-50">
       {/* Modal Content */}
-      <div className="bg-white p-4 rounded-lg w-full max-w-md shadow-lg">
+      <div className="bg-white p-4 rounded-lg w-full sm:max-w-md shadow-lg">
         <h2 className="text-xl font-bold mb-2">Add Event for {date}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-2">
