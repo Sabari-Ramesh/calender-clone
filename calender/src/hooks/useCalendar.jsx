@@ -68,12 +68,21 @@ const useCalendar = (year, month) => {
     return true;
   };
 
+  // Remove event by its unique identifier
+  const removeEvent = (date, title) => {
+    setEvents((prevEvents) =>
+      prevEvents.filter(
+        (event) => !(event.date === date && event.title === title)
+      )
+    );
+  };
+
   // Get events for a specific date
   const getEventsForDate = (date) => {
     return events.filter((event) => event.date === date);
   };
 
-  return { generateCalendar, addEvent, getEventsForDate };
+  return { generateCalendar, addEvent, removeEvent, getEventsForDate };
 };
 
 export default useCalendar;

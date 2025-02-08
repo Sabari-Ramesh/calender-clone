@@ -4,7 +4,8 @@ import useCalendar from "../hooks/useCalendar";
 import EventModal from "./EventModal";
 
 const Calendar = ({ year, month }) => {
-  const { generateCalendar, addEvent, getEventsForDate } = useCalendar(year, month);
+  const { generateCalendar, addEvent, removeEvent, getEventsForDate } =
+    useCalendar(year, month);
   const calendarGrid = generateCalendar();
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -12,6 +13,10 @@ const Calendar = ({ year, month }) => {
   const handleClick = (date) => {
     setSelectedDate(date);
     setShowModal(true);
+  };
+
+  const handleRemoveEvent = (date, title) => {
+    removeEvent(date, title);
   };
 
   return (
@@ -35,16 +40,34 @@ const Calendar = ({ year, month }) => {
               }`}
               onClick={() => handleClick(date)}
             >
-              <div className={`${!isCurrentMonth ? "text-gray-500" : ""}`}>{day}</div>
+              <div className={`${!isCurrentMonth ? "text-gray-500" : ""}`}>
+                {day}
+              </div>
               <div className="flex flex-col gap-1">
                 {dayEvents.slice(0, 2).map((event, idx) => (
-                  <button
-                    key={idx}
-                    className={`text-xs rounded p-1 ${event.color}`}
-                    style={{ textDecoration: event.endTime && dayjs(event.endTime).isBefore(dayjs()) ? "line-through" : "none" }}
-                  >
-                    {event.title}
-                  </button>
+                  <div key={idx} className="relative inline-block">
+                    <button
+                      className={`text-xs rounded p-1 ${event.color}`}
+                      style={{
+                        textDecoration:
+                          event.endTime &&
+                          dayjs(event.endTime).isBefore(dayjs())
+                            ? "line-through"
+                            : "none",
+                      }}
+                    >
+                      {event.title}
+                    </button>
+                    <span
+                      className="absolute top-0 right-0 text-red-500 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveEvent(date, event.title);
+                      }}
+                    >
+                      &times;
+                    </span>
+                  </div>
                 ))}
                 {dayEvents.length > 2 && (
                   <div
