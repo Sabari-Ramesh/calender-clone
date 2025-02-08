@@ -6,13 +6,8 @@ import EventListCard from "./EventListCard";
 import EventDetailsModal from "./EventDetailsModal";
 
 const Calendar = ({ year, month }) => {
-  const {
-    generateCalendar,
-    addEvent,
-    updateEvent,
-    removeEvent,
-    getEventsForDate,
-  } = useCalendar(year, month);
+  const { generateCalendar, addEvent, updateEvent, removeEvent, getEventsForDate } =
+    useCalendar(year, month);
 
   const calendarGrid = generateCalendar();
   const [selectedDate, setSelectedDate] = useState(null);
@@ -57,18 +52,12 @@ const Calendar = ({ year, month }) => {
             <div
               key={index}
               className={`border p-1 flex flex-col justify-between items-center h-24 w-full cursor-pointer ${
-                isToday ? "bg-yellow-200" : "" // Highlight today's date with a custom color
+                isToday ? "bg-yellow-200" : ""
               }`}
               onClick={() => handleClick(date)}
             >
               {/* Display the day number */}
-              <div
-                className={`text-center ${
-                  !isCurrentMonth ? "text-gray-500" : ""
-                }`}
-              >
-                {day}
-              </div>
+              <div className={`text-center ${!isCurrentMonth ? "text-gray-500" : ""}`}>{day}</div>
 
               {/* Display events as buttons */}
               <div className="flex flex-col gap-1 w-full overflow-hidden">
@@ -78,10 +67,8 @@ const Calendar = ({ year, month }) => {
                       className={`w-full text-xs rounded px-1 py-0.5 truncate ${event.color}`}
                       style={{
                         textDecoration:
-                          dayjs(date).isBefore(dayjs(), "day") || // Check if the event is from a past day
-                          (date === today &&
-                            event.endTime &&
-                            dayjs(event.endTime).isBefore(dayjs())) // Check if the event is today and its time has passed
+                          dayjs(date).isBefore(dayjs(), "day") ||
+                          (date === today && event.endTime && dayjs(event.endTime).isBefore(dayjs()))
                             ? "line-through"
                             : "none",
                       }}
@@ -91,16 +78,14 @@ const Calendar = ({ year, month }) => {
                       }}
                     >
                       {/* Show 3 letters on mobile, full title on desktop */}
-                      <span className="sm:hidden">
-                        {event.title.slice(0, 3)}
-                      </span>
+                      <span className="sm:hidden">{event.title.slice(0, 3)}</span>
                       <span className="hidden sm:inline">{event.title}</span>
                     </button>
                     <span
                       className="absolute top-0 right-0 text-red-500 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleRemoveEvent(event.id); // Pass the event ID
+                        handleRemoveEvent(event.id);
                       }}
                     >
                       &times;
@@ -144,6 +129,11 @@ const Calendar = ({ year, month }) => {
           date={selectedDate}
           events={getEventsForDate(selectedDate)}
           onClose={() => setShowEventListCard(false)}
+          onDelete={handleRemoveEvent}
+          onEdit={(event) => {
+            setSelectedEvent(event);
+            setShowEventListCard(false);
+          }}
         />
       )}
 
