@@ -22,20 +22,22 @@ const Calendar = ({ year, month }) => {
   return (
     <div className="p-4">
       {/* Responsive Weekdays */}
-      <div className="grid grid-cols-7 gap-2 text-center font-bold text-xs sm:text-sm">
+      <div className="grid grid-cols-7 gap-0 text-center font-bold text-xs sm:text-sm">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day}>{day}</div>
+          <div key={day} className="border p-1">
+            {day}
+          </div>
         ))}
       </div>
       {/* Responsive Calendar Grid */}
-      <div className="grid grid-cols-7 gap-2 mt-2 text-xs sm:text-sm">
+      <div className="grid grid-cols-7 gap-0 mt-0 text-xs sm:text-sm">
         {calendarGrid.flat().map(({ date, day, isCurrentMonth }, index) => {
           const dayEvents = getEventsForDate(date);
 
           return (
             <div
               key={index}
-              className={`border p-2 cursor-pointer hover:bg-gray-100 ${
+              className={`border p-1 cursor-pointer hover:bg-gray-100 ${
                 !isCurrentMonth ? "bg-gray-200" : ""
               }`}
               onClick={() => handleClick(date)}
@@ -50,7 +52,7 @@ const Calendar = ({ year, month }) => {
                 {dayEvents.slice(0, 2).map((event, idx) => (
                   <div key={idx} className="relative inline-block w-full">
                     <button
-                      className={`w-full text-xs rounded px-2 py-1 ${event.color}`}
+                      className={`w-full text-xs rounded px-1 py-0.5 ${event.color}`}
                       style={{
                         textDecoration:
                           event.endTime &&
@@ -78,7 +80,7 @@ const Calendar = ({ year, month }) => {
                 ))}
                 {dayEvents.length > 2 && (
                   <button
-                    className={`text-xs text-blue-500 cursor-pointer w-full rounded px-2 py-1 ${dayEvents[0].color}`}
+                    className={`text-xs text-blue-500 cursor-pointer w-full rounded px-1 py-0.5 ${dayEvents[0].color}`}
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedDate(date);
