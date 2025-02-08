@@ -25,10 +25,10 @@ const Calendar = ({ year, month }) => {
     setShowModal(true);
   };
 
-  const handleRemoveEvent = (date, title) => {
-    removeEvent(date, title);
+  const handleRemoveEvent = (id) => {
+    removeEvent(id);
   };
-
+  
   const handleEventClick = (event) => {
     setSelectedEvent(event);
   };

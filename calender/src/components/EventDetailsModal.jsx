@@ -10,10 +10,10 @@ const EventDetailsModal = ({ event, onClose, onUpdate }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const updatedEvent = { title, startTime, endTime, description, date: event.date };
+  
+    const updatedEvent = { id: event.id, title, startTime, endTime, description, date: event.date };
     const result = onUpdate(updatedEvent);
-
+  
     if (!result.success) {
       setErrors(result.errors);
     } else {
