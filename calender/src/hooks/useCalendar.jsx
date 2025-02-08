@@ -36,7 +36,19 @@ const useCalendar = (year, month) => {
 
   // Add event with validation
   const addEvent = (newEvent) => {
-    const { date, startTime, endTime } = newEvent;
+    const { date, startTime, endTime, title } = newEvent;
+
+    // Validate event title length
+    if (title.length > 20) {
+      alert("Event title must not exceed 20 characters.");
+      return false;
+    }
+
+    // Validate start time and end time
+    if (startTime >= endTime) {
+      alert("Start time must be earlier than end time.");
+      return false;
+    }
 
     // Validate overlapping events
     const existingEvents = events.filter((event) => event.date === date);

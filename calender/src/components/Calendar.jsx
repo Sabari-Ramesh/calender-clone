@@ -4,10 +4,7 @@ import useCalendar from "../hooks/useCalendar";
 import EventModal from "./EventModal";
 
 const Calendar = ({ year, month }) => {
-  const { generateCalendar, addEvent, getEventsForDate } = useCalendar(
-    year,
-    month
-  );
+  const { generateCalendar, addEvent, getEventsForDate } = useCalendar(year, month);
   const calendarGrid = generateCalendar();
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -36,25 +33,18 @@ const Calendar = ({ year, month }) => {
               className={`border p-2 cursor-pointer hover:bg-gray-100 ${
                 !isCurrentMonth ? "bg-gray-200" : ""
               }`}
-              onClick={() => handleClick(date)} // Use onClick instead of onDoubleClick
+              onClick={() => handleClick(date)}
             >
-              <div className={`${!isCurrentMonth ? "text-gray-500" : ""}`}>
-                {day}
-              </div>
+              <div className={`${!isCurrentMonth ? "text-gray-500" : ""}`}>{day}</div>
               <div className="flex flex-col gap-1">
                 {dayEvents.slice(0, 2).map((event, idx) => (
-                  <div
+                  <button
                     key={idx}
                     className={`text-xs rounded p-1 ${event.color}`}
-                    style={{
-                      textDecoration:
-                        event.endTime && dayjs(event.endTime).isBefore(dayjs())
-                          ? "line-through"
-                          : "none",
-                    }}
+                    style={{ textDecoration: event.endTime && dayjs(event.endTime).isBefore(dayjs()) ? "line-through" : "none" }}
                   >
                     {event.title}
-                  </div>
+                  </button>
                 ))}
                 {dayEvents.length > 2 && (
                   <div

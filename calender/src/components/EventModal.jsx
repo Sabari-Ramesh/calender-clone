@@ -5,12 +5,31 @@ const EventModal = ({ date, onClose, onSubmit }) => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [description, setDescription] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate event title length
+    if (title.length > 20) {
+      newErrors.title = "Event title must not exceed 20 characters.";
+    }
+
+    // Validate start time and end time
+    if (!startTime || !endTime) {
+      newErrors.time = "Start time and end time are required.";
+    } else if (startTime >= endTime) {
+      newErrors.time = "Start time must be earlier than end time.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!title || !startTime || !endTime) {
-      alert("Please fill in all required fields.");
+    if (!validateForm()) {
       return;
     }
 
@@ -40,8 +59,11 @@ const EventModal = ({ date, onClose, onSubmit }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full p-2 border rounded"
-              required
+              maxLength={20}
             />
+            {errors.title && (
+              <p className="text-red-500 text-xs">{errors.title}</p>
+            )}
           </div>
           <div className="mb-2">
             <label className="block text-sm font-medium">Start Time</label>
@@ -50,7 +72,6 @@ const EventModal = ({ date, onClose, onSubmit }) => {
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
               className="w-full p-2 border rounded"
-              required
             />
           </div>
           <div className="mb-2">
@@ -60,8 +81,10 @@ const EventModal = ({ date, onClose, onSubmit }) => {
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
               className="w-full p-2 border rounded"
-              required
             />
+            {errors.time && (
+              <p className="text-red-500 text-xs">{errors.time}</p>
+            )}
           </div>
           <div className="mb-2">
             <label className="block text-sm font-medium">Description</label>
@@ -79,7 +102,10 @@ const EventModal = ({ date, onClose, onSubmit }) => {
             >
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
               Save
             </button>
           </div>
