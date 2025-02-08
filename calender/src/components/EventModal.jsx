@@ -28,8 +28,9 @@ const EventModal = ({ date, onClose, onSubmit }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-4 rounded-lg w-96">
+    <div className="fixed inset-0 flex justify-center items-center z-50">
+      {/* Modal Content */}
+      <div className="bg-white p-4 rounded-lg w-full max-w-md shadow-lg">
         <h2 className="text-xl font-bold mb-2">Add Event for {date}</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-2">
@@ -78,10 +79,7 @@ const EventModal = ({ date, onClose, onSubmit }) => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
+            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
               Save
             </button>
           </div>

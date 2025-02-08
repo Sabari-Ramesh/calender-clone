@@ -12,19 +12,21 @@ const Calendar = ({ year, month }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const handleDoubleClick = (date) => {
+  const handleClick = (date) => {
     setSelectedDate(date);
     setShowModal(true);
   };
 
   return (
     <div className="p-4">
-      <div className="grid grid-cols-7 gap-2 text-center font-bold">
+      {/* Responsive Weekdays */}
+      <div className="grid grid-cols-7 gap-2 text-center font-bold text-xs sm:text-sm">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <div key={day}>{day}</div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-2 mt-2">
+      {/* Responsive Calendar Grid */}
+      <div className="grid grid-cols-7 gap-2 mt-2 text-xs sm:text-sm">
         {calendarGrid.flat().map(({ date, day, isCurrentMonth }, index) => {
           const dayEvents = getEventsForDate(date);
 
@@ -34,16 +36,16 @@ const Calendar = ({ year, month }) => {
               className={`border p-2 cursor-pointer hover:bg-gray-100 ${
                 !isCurrentMonth ? "bg-gray-200" : ""
               }`}
-              onDoubleClick={() => handleDoubleClick(date)}
+              onClick={() => handleClick(date)} // Use onClick instead of onDoubleClick
             >
               <div className={`${!isCurrentMonth ? "text-gray-500" : ""}`}>
                 {day}
               </div>
-              <div>
+              <div className="flex flex-col gap-1">
                 {dayEvents.slice(0, 2).map((event, idx) => (
                   <div
                     key={idx}
-                    className={`text-xs rounded p-1 mb-1 ${event.color}`}
+                    className={`text-xs rounded p-1 ${event.color}`}
                     style={{
                       textDecoration:
                         event.endTime && dayjs(event.endTime).isBefore(dayjs())
