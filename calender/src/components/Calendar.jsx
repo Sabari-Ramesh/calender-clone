@@ -6,9 +6,13 @@ import EventListCard from "./EventListCard";
 import EventDetailsModal from "./EventDetailsModal";
 
 const Calendar = ({ year, month }) => {
-  const { generateCalendar, addEvent, updateEvent, removeEvent, getEventsForDate } =
-    useCalendar(year, month);
-
+  const {
+    generateCalendar,
+    addEvent,
+    updateEvent,
+    removeEvent,
+    getEventsForDate,
+  } = useCalendar(year, month);
   const calendarGrid = generateCalendar();
   const [selectedDate, setSelectedDate] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -32,43 +36,66 @@ const Calendar = ({ year, month }) => {
   };
 
   return (
-    <div className="p-4 relative">
-      {/* Responsive Weekdays */}
-      <div className="grid grid-cols-7 gap-0 text-center font-bold text-xs sm:text-sm">
+    <div className="p-4 relative max-w-[80rem] mx-auto">
+      {/* Weekdays Header */}
+      <div
+        className="grid grid-cols-7 gap-0 text-center font-bold text-xs sm:text-sm rounded-t-lg overflow-hidden"
+        style={{ backgroundColor: "#f3f4f6" }} // Light gray background for weekdays header
+      >
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day} className="border p-1">
+          <div
+            key={day}
+            className=" p-1  border-t  border-gray-300"
+            style={{ backgroundColor: "#ffffff" }}
+          >
             {day}
           </div>
         ))}
       </div>
 
-      {/* Responsive Calendar Grid */}
-      <div className="grid grid-cols-7 gap-0 mt-0 text-xs sm:text-sm">
+      {/* Calendar Grid */}
+      <div
+        className="grid grid-cols-7 gap-0 mt-0 text-xs sm:text-sm rounded-b-lg overflow-hidden"
+        style={{
+          backgroundColor: "#ffffff", // White background for the grid
+          borderColor: "#e5e7eb", // Light gray border color
+        }}
+      >
         {calendarGrid.flat().map(({ date, day, isCurrentMonth }, index) => {
           const dayEvents = getEventsForDate(date);
           const isToday = date === today; // Check if the date is today
-
           return (
             <div
               key={index}
               className={`border p-1 flex flex-col justify-between items-center h-24 w-full cursor-pointer ${
-                isToday ? "bg-yellow-200" : ""
+                isToday ? "bg-blue-200" : ""
               }`}
+              style={{
+                borderColor: "#e5e7eb", // Light gray border for each cell
+              }}
               onClick={() => handleClick(date)}
             >
               {/* Display the day number */}
-              <div className={`text-center ${!isCurrentMonth ? "text-gray-500" : ""}`}>{day}</div>
+              <div
+                className={`text-center ${
+                  !isCurrentMonth ? "text-gray-500" : ""
+                }`}
+              >
+                {day}
+              </div>
 
               {/* Display events as buttons */}
               <div className="flex flex-col gap-1 w-full overflow-hidden">
                 {dayEvents.slice(0, 2).map((event, idx) => (
                   <div key={idx} className="relative inline-block w-full">
                     <button
-                      className={`w-full text-xs rounded px-1 py-0.5 truncate ${event.color}`}
+                      className={`w-full h-5 text-xs rounded px-1 py-0.5 truncate ${event.color}`}
                       style={{
                         textDecoration:
                           dayjs(date).isBefore(dayjs(), "day") ||
-                          (date === today && event.endTime && dayjs(event.endTime).isBefore(dayjs()))
+                          (date === today &&
+                            event.endTime &&
+                            dayjs(event.endTime).isBefore(dayjs()))
                             ? "line-through"
                             : "none",
                       }}
@@ -78,11 +105,13 @@ const Calendar = ({ year, month }) => {
                       }}
                     >
                       {/* Show 3 letters on mobile, full title on desktop */}
-                      <span className="sm:hidden">{event.title.slice(0, 3)}</span>
+                      <span className="sm:hidden">
+                        {event.title.slice(0, 3)}
+                      </span>
                       <span className="hidden sm:inline">{event.title}</span>
                     </button>
                     <span
-                      className="absolute top-0 right-0 text-red-500 cursor-pointer"
+                      className="absolute top-0 right-0 text-red-500 cursor-pointer mr-1 sm:mr-3 sm:right-3"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleRemoveEvent(event.id);
