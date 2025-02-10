@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import dayjs from "dayjs";
 import useCalendar from "../hooks/useCalendar";
 import EventModal from "./EventModal";
@@ -14,10 +14,10 @@ const Calendar = ({ year, month }) => {
     getEventsForDate,
   } = useCalendar(year, month);
   const calendarGrid = generateCalendar();
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState();
   const [showModal, setShowModal] = useState(false);
   const [showEventListCard, setShowEventListCard] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState();
 
   // Get today's date
   const today = dayjs().format("YYYY-MM-DD");
@@ -57,13 +57,13 @@ const Calendar = ({ year, month }) => {
       <div
         className="grid grid-cols-7 gap-0 mt-0 text-xs sm:text-sm rounded-b-lg overflow-hidden"
         style={{
-          backgroundColor: "#ffffff", // White background for the grid
-          borderColor: "#e5e7eb", // Light gray border color
+          backgroundColor: "#ffffff",
+          borderColor: "#e5e7eb",
         }}
       >
         {calendarGrid.flat().map(({ date, day, isCurrentMonth }, index) => {
           const dayEvents = getEventsForDate(date);
-          const isToday = date === today; // Check if the date is today
+          const isToday = date === today; 
           return (
             <div
               key={index}
@@ -71,7 +71,7 @@ const Calendar = ({ year, month }) => {
                 isToday ? "bg-blue-200" : ""
               }`}
               style={{
-                borderColor: "#e5e7eb", // Light gray border for each cell
+                borderColor: "#e5e7eb", 
               }}
               onClick={() => handleClick(date)}
             >

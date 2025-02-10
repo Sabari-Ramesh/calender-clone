@@ -4,7 +4,7 @@ import data from "../data.json";
 const useCalendar = (year, month) => {
   const [events, setEvents] = useState(data);
 
-  // Predefined light colors
+
   const lightColors = [
     "bg-green-200",
     "bg-red-200",
@@ -15,7 +15,7 @@ const useCalendar = (year, month) => {
     "bg-pink-200",
   ];
 
-  // Generate a 35-grid calendar
+  
   const generateCalendar = () => {
     const firstDayOfMonth = dayjs(`${year}-${month}-01`);
     const startDay = firstDayOfMonth.startOf("month").day();

@@ -3,14 +3,14 @@ import React from "react";
 const EventListCard = ({ date, events, onClose, onDelete, onEdit }) => {
   return (
     <div className="fixed inset-0 flex justify-center items-center z-50">
-      {/* Modal Content */}
+      
       <div className="relative bg-white p-6 rounded-lg w-full sm:max-w-md shadow-lg z-50">
-        {/* Header */}
+       
         <h2 className="text-xl font-bold mb-4 text-gray-800">
           Events for {date}
         </h2>
 
-        {/* Event List */}
+      
         <div className="flex flex-col gap-3 max-h-64 overflow-y-auto">
           {events.map((event, idx) => (
             <div
@@ -25,9 +25,9 @@ const EventListCard = ({ date, events, onClose, onDelete, onEdit }) => {
                 </span>
               </div>
 
-              {/* Action Buttons */}
+              
               <div className="flex gap-2">
-                {/* Edit Button */}
+              
                 <button
                   className="text-blue-500 hover:underline text-sm font-medium"
                   onClick={() => onEdit(event)}
